@@ -3,7 +3,7 @@ FROM alpine:latest as build
 
 ENV BUILDX_VERS=${BUILDX_VERS:-v0.5.1}
 ENV BUILDX_ARCH=${BUILDX_ARCH:-amd64}
-ENV BUILDX_URL=https://github.com/docker/buildx/releases/download/${BUILDX_VERS}}/buildx-${BUILDX_VERS}.linux-${BUILDX_ARCH}
+ENV BUILDX_URL=https://github.com/docker/buildx/releases/download/${BUILDX_VERS}/buildx-${BUILDX_VERS}.linux-${BUILDX_ARCH}
 
 WORKDIR /workspace
 
@@ -21,12 +21,12 @@ LABEL org.label-schema.name="cloud-builder-buildx" \
 
 USER root
 
-WORKDIR /${USER}/.docker/cli-plugins
+WORKDIR /${USER:-root}/.docker/cli-plugins
 
 COPY --from=build /workspace/docker-buildx .
 
-RUN chmod +x docker-buildx
+RUN chmod +x docker-buildx && docker buildx install
 
-ENTRYPOINT ["/usr/bin/docker"]
+ENTRYPOINT ["/usr/local/bin/docker"]
 CMD []
 HEALTHCHECK NONE
